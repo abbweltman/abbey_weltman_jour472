@@ -8,7 +8,7 @@ editor:
 
 This tutorial, based on my 2024 presentation for the National Institute
 for Computer Assisted Reporting (NICAR), will show you the essential
-workflow for any data analysis project in R. You will learn to import
+workflow for any data analysis project in install.packages("rio")R. You will learn to import
 data, explore it, use basic commands to sort and filter and build
 summary tables. You will build a basic data visualization from your work
 -- all in R code.
@@ -401,15 +401,14 @@ How to conduct filter queries from a dataset
 ```
 
 ```{r}
-#your answer here
-```
+#The Median Salary for NTY employees is 51500
 
 ```         
   2: Identify title, gender and race of the highest paid position at NYT  
 ```
-
+ 
 ```{r}
-#your answer here
+#the highest paid position is a news Assistant with a salary of $65,000 and it is a POC cis female
 ```
 
 ```         
@@ -417,7 +416,7 @@ How to conduct filter queries from a dataset
 ```
 
 ```{r}
-#your answer here
+#The Median Salary for Bloombery is 50,000 that is 15,000 less than NYT. However the Highest salary is signifigantly higher than NYT. 
 
 ```
 
