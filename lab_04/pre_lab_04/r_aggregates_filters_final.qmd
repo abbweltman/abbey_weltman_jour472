@@ -291,5 +291,18 @@ Answer: 48.5%
 Answer this question in English: Write in Elms
 
 Almost half of Baltimore City's population has a lower income then the Median. 
+```{r}
+baltcity_race_8_13 %>%
+select(census_tract, x2020_black, x2020_white) %>% 
+mutate(ratio_w_b = round(x2020_black / x2020_white ,2)) %>%
+arrange(desc(ratio_w_b))
+sum(baltcity_race_8_13$x2020_white, na.rm = TRUE)
 
+```
+```{r}
+baltcity_race_8_13 %>%
+select(census_tract, x2020_white, x2020_total) %>% 
+mutate(pct_white = round(x2020_white / x2020_total ,2)) %>%
+arrange(desc(pct_white))
+sum(baltcity_race_8_13$x2020_white, na.rm = TRUE)
 ```
