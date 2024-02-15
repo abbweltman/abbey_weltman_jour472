@@ -7,6 +7,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ### Load libraries and establish settings
+
 ```{r}
 # Turn off scientific notation
 options(scipen=999)
@@ -21,17 +22,18 @@ library(janitor)
 
 ### Load data
 
-In this data set, each row represents a city or town in Maryland with the 2010 and 2020 figures for: 
+In this data set, each row represents a city or town in Maryland with the 2010 and 2020 figures for:
 
--  Total population 
--  White only population
--  Black or African American only population
--  Hispanic only population 
--  Native American only population
--  Asian only population
--  Pacific Islander (including native Hawiian) only population
+-   Total population
+-   White only population
+-   Black or African American only population
+-   Hispanic only population
+-   Native American only population
+-   Asian only population
+-   Pacific Islander (including native Hawiian) only population
 
-Background on this data from [Social Explorer](https://www.socialexplorer.com/data/ACS2016_5yr/metadata/?ds=ACS16_5yr&table=B02001) 
+Background on this data from [Social Explorer](https://www.socialexplorer.com/data/ACS2016_5yr/metadata/?ds=ACS16_5yr&table=B02001)
+
 ```{r}
 # Write code to load the Maryland race by city, place for 2010 - 2020 and call it md_race.
 # The data is called lab_03.csv, and is in the same folder as lab_03.qmd (this data notebook)
@@ -44,6 +46,7 @@ View(md_race)
 Q1: Name the five cities that had the largest Hispanic population as a percentage of the entire population in 2020 and call it top5_hispanic. Produce a top 5 table for each, selecting the place, 2020 Hispanic, 2020 total and your new calculation.
 
 A1:
+
 ```{r}
 # Write your code in this codeblock.
 md_race %>%
@@ -54,9 +57,9 @@ md_race %>%
 
 ```
 
-Q2: Compare the top 10 cities with the largest Black population as a percentage of the overall population in 2010 and 2020. Filter for places with more than 20,000 population in 2010. Call your results pct_black. Compare results for 2020 vs 2010. What is different? What surprised you? 
+Q2: Compare the top 10 cities with the largest Black population as a percentage of the overall population in 2010 and 2020. Filter for places with more than 20,000 population in 2010. Call your results pct_black. Compare results for 2020 vs 2010. What is different? What surprised you?
 
-A2: 
+A2:
 
 ```{r}
 pct_black <- md_race   %>%
@@ -66,10 +69,11 @@ pct_black <- md_race   %>%
          pctblack_2010 = (x2010_black / x2010_total) * 100) %>% 
     slice_max(pctblack_2020, n = 10) 
 
+knitr::opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
 #The results for 2020 and 2010 surprised me because it is thought that the black population in Baltimore is declining but in many cities there was an increase in the black population over the last 10 years. 
 ```
 
-Q3: Find the 15 communities that had the great gains in Hispanic population from 2010 to 2020 as measured by percentage change. Also calculate percentage change for the community's overall growth during the same period. Filter your results for communities with more than 10,000 people as of 2020. Your results will be hisp_growth. Look at your results, craft a one-paragraph story pitch for your editor. 
+Q3: Find the 15 communities that had the great gains in Hispanic population from 2010 to 2020 as measured by percentage change. Also calculate percentage change for the community's overall growth during the same period. Filter your results for communities with more than 10,000 people as of 2020. Your results will be hisp_growth. Look at your results, craft a one-paragraph story pitch for your editor.
 
 A3:
 
@@ -82,5 +86,7 @@ hisp_growth <- md_race %>%
  slice_max(hisp_growth, n = 15) %>%
 arrange(desc(hisp_growth)) 
 
+
+knitr::opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
 #If I were writing a story on this data it would fascinate me that so many cities in Baltimore had a percent increase of over 100% in their Hispanic population. I would specifically look at North Laurel CDP because they had a percent change of 1186.7470%. I would want to explore this more and see why this city has changed the most and increased the Hispanic population the most over the last 10 years. I also would want to look at the towns who had a high Hispanic growth but negative total percent change and see if they have similarities. 
 ```
