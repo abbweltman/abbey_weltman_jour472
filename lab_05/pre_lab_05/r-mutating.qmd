@@ -14,16 +14,19 @@ We'll import a dataset of median household income in Baltimore for the 2010, 201
 
 ```{r eval=FALSE, message=FALSE}
 
+baltcity_income<- read_csv("assets/data/baltcity_income_clean.csv") %>% 
+  as.data.frame()
+
 #working on this with your laptop, uncomment and use this code below
-baltcity_income<- read_csv("baltcity_income_clean.csv") %>% 
-as.data.frame()
+#baltcity_income<- read_csv("baltcity_income_clean.csv") %>% 
+#  as.data.frame()
 
 ```
 
 One main question involves how the median income changed from 2010 to 2020. First, let's add a column called `diff_2010_2020` to see how median income changed for each census tract. The code is pretty simple. Remember, with `summarize`, we used `n()` to count things. With `mutate`, we use very similar syntax to calculate a new value -- a new column of data -- using other values in our dataset. 
 
 ```{r}
-Diff_income <- baltcity_income %>%
+baltcity_income %>%
   select(Census, Neighborhood, x2010, x2020) %>%
     mutate(Diff_Income = (x2020-x2010))
 ```
@@ -31,7 +34,7 @@ Diff_income <- baltcity_income %>%
 Now we've got our `Diff_Income` column. Let's provide some context and use a percentage change calculation to compare the gains. We'll add a new column, `Diff_Pct_2020`. Remember the percentage change calculation is (New-Old)/Old
 
 ```{r}
-Diff_Pct_2020 <- baltcity_income %>%
+baltcity_income %>%
   select(Census, Neighborhood, x2010, x2020) %>%
     mutate(Diff_Income = (x2020-x2010)) %>% 
     mutate(Diff_Pct_2020 = (x2020-x2010)/x2010)
@@ -41,7 +44,7 @@ Diff_Pct_2020 <- baltcity_income %>%
 Look at `Diff_Pct_2020`.  Do those numbers look like we expect them to? No. They're a decimal expressed as a percentage. So let's fix that by multiplying by 100. We're also rounding the result to two digits from nine so it looks cleaner
 
 ```{r}
-Diff_Pct_2020 <- baltcity_income %>%
+baltcity_income %>%
   select(Census, Neighborhood, x2010, x2020) %>%
     mutate(Diff_Income = (x2020-x2010)) %>% 
     mutate(Diff_Pct_2020 = round((x2020-x2010)/x2010*100,2))
@@ -51,7 +54,7 @@ Diff_Pct_2020 <- baltcity_income %>%
 Now, let's fix the ordering with arrange and sort descending on the percentage change column.
 
 ```{r}
-Diff_Pct_2020 <- baltcity_income %>%
+baltcity_income %>%
   select(Census, Neighborhood, x2010, x2020) %>%
     mutate(Diff_Income = (x2020-x2010)) %>% 
     mutate(Diff_Pct_2020 = round((x2020-x2010)/x2010*100,2)) %>% 
@@ -63,7 +66,7 @@ So we know who the winners since the descending sort by `Diff_Pct_2020` shows us
 Now, which areas suffered the biggest declines in median income? We will copy the previous code and alter the arrange so it is ascending from the lowest value.
 
 ```{r}
-Diff_Pct_2020 <- baltcity_income %>%
+baltcity_income %>%
   select(Census, Neighborhood, x2010, x2020) %>%
     mutate(Diff_Income = (x2020-x2010)) %>% 
     mutate(Diff_Pct_2020 = round((x2020-x2010)/x2010*100,2)) %>% 
@@ -76,10 +79,10 @@ Diff_Pct_2020 <- baltcity_income %>%
 
 For this example, we'll examine a dataset of loans small businesses obtained to stay afloat during the Covid-19 pandemic. It's called the PPP loan database which stands for Paycheck Protection Program loans.
 ```{r}
-
+maryland_ppp <- read.csv("assets/data/ppp_applications_md.csv")
 
 #working on this with your laptop, uncomment and use this code below
-maryland_ppp <- read.csv("ppp_applications_md.csv")
+#maryland_ppp <- read.csv("ppp_applications_md.csv")
 
 ```
 
@@ -98,8 +101,7 @@ maryland_ppp %>%
   mutate(
     upper_city = str_to_upper(city)
 ) %>% 
-   select(city, upper_city, name, amount) %>% 
-  head()
+   select(city, upper_city, name, amount)
 ```
 
 Notice we kept the original data in `city` and transformed it in a new column, `upper_city`. Always a good practice to keep your original data intact in case you make a coding mistake or need to change the original for reference.
@@ -129,8 +131,8 @@ maryland_with_in_out <- maryland_ppp %>%
   ) 
 
 maryland_with_in_out %>% 
-  select(name, amount, servicing_lender_state, in_out) %>% 
-  head()
+  select(name, amount, servicing_lender_state, in_out)
+
 ```
 
 We can then use our new `in_out` column in group_by statements to make summarizing easier.
@@ -146,8 +148,8 @@ maryland_with_in_out <- maryland_ppp %>%
   )
 
 maryland_with_in_out %>% 
-  select(name, amount, servicing_lender_state, in_out) %>% 
-  head()
+  select(name, amount, servicing_lender_state, in_out)
+
 ```
 
 Mutate is an essential tool to make your data more useful and allows you to ask more questions.
@@ -163,74 +165,29 @@ And answer the following questions:
 
 1) Calculate the difference in median income from 2010 to 2020 for all places listed. Calculate the percentage change. 
 ```{r}
-city_md_income <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/lab_05/pre_lab_05/city_md_income.csv")
-View(city_md_income)
-
-city_md_income%>%
-  select(place,median_inc_2010, median_inc_2020) %>%
-    mutate(Diff_Income = (median_inc_2020-median_inc_2010)) %>% 
-    mutate(Diff_Pct_2020 = round((median_inc_2020-median_inc_2010)/median_inc_2010*100,2)) %>% 
-    arrange(desc(Diff_Pct_2020))
-
-city_md_income%>%
-  select(place,median_inc_2010, median_inc_2020) %>%
-    mutate(Diff_Income = (median_inc_2020-median_inc_2010) ) %>% 
-    mutate(Diff_Pct_2020 = round((median_inc_2020-median_inc_2010)/median_inc_2010*100,2)) %>% 
-    arrange(desc(Diff_Income))
-  
+ 
 ```
 
 Which city had the highest absolute change? Which had the highest percentage change?
 ```{r}
-Beaver Creek CDP had the highest absolute change of 118292
-Shaft has the highest percent change of 399.88%
+ 
 ```
  
 Produce a table with the top 25 places ranked by the highest percentage change.
 ```{r}
- city_md_income%>%
-  select(place,median_inc_2010, median_inc_2020) %>%
-    mutate(Diff_Income = (median_inc_2020-median_inc_2010)) %>% 
-    mutate(Diff_Pct_2020 = round((median_inc_2020-median_inc_2010)/median_inc_2010*100,2)) %>% 
-    arrange(desc(Diff_Pct_2020)) %>% 
-head(place,n= 25)
+ 
 ```
 
 Produce a second table with the top 25 places ranked by the lowest or negative percentage change.
 ```{r}
-  city_md_income%>%
-  select(place,median_inc_2010, median_inc_2020) %>%
-    mutate(Diff_Income = (median_inc_2020-median_inc_2010)) %>% 
-    mutate(Diff_Pct_2020 = round((median_inc_2020-median_inc_2010)/median_inc_2010*100,2)) %>% 
-    arrange(Diff_Pct_2020) %>% 
-head(place,n= 25)
+ 
 ```
 
 
 **Question #2: **
-#A) Determine the summary statistics of mdcities median income for 2020. Determine the value for the first quartile.
-```{r}
-city_md_income %>%
-  summary(city_md_income)
+Answer this question in English: Write in Elms
 
-#the value for the first quartile is $63327
-```
-```{r}
-#Use mutate and case_when to create a column called “category.” Within this, label cities in the first quartile as “lowest” and the remaining “above”. Create a new table called “lowest” with your results
-
-lowest <- city_md_income %>%
-mutate(
-     category = case_when(
-       median_inc_2020 >=  63327 ~ "above",
-       median_inc_2020 <=  63327 ~ "below",
-       median_inc_2020 != "NA"~ "NA"
-     ))
-
-lowest %>%
-  select(place, median_inc_2020, category) 
-```
-**Question #3: **
-3) Building on the previous lesson on filtering, describe how you would determine the median value of the percentage change and produce a table with the 10 neighborhoods with the highest change and the 10 with the lowest change.
+2) Building on the previous lesson on filtering, describe how you would determine the median value of the percentage change and produce a table with the 10 neighborhoods with the highest change and the 10 with the lowest change.
  
-#At the end of the code I would add slice max and a slice min tool to format the tables and then add a head or n code so it only selects the top 10 vlaues. 
+
  

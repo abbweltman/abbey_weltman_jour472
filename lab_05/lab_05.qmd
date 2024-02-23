@@ -23,7 +23,9 @@ You'll need to load two packages for this: the tidyverse and janitor.
 ```{r}
 # Turn off scientific notation
 options(scipen=999)
-
+library(tidyverse)
+library(janitor)
+library(dplyr)
 ```
 
 ### Load Life Expectancy Data
@@ -59,7 +61,24 @@ Include the code to show the number of records. Clean the names using Janitor
 
 ```{r}
 
+us_death <- read_csv("CDC_Life_Census_Tract_2010_2015.csv")
 
+us_death %>%
+  select(State, County,"Life Expectancy", "Life Expectancy Range") %>%
+  mutate(Total_records = nrow(us_death), "n ")
+
+# there are 73,121 rows 
+
+us_death %>%
+  select( State, County,"Census Tract Number", "Life Expectancy", "Life Expectancy Range",)
+  
+    us_death <- janitor::clean_names(us_death)
+
+md_death <- us_death %>%
+  filter(state == "Maryland")
+
+balt_death <- md_death %>%
+  filter(county == "Baltimore City, MD")
 
 ```
 
@@ -72,8 +91,24 @@ Show the neighborhoods with a life expectancy rate below the 1st quartile, arran
 
 **A2.** 
 ```{r}
+balt_death2 <- read_csv("balt_death_census.csv")%>%
+  as.data.frame()
 
+balt_death2 %>%
+  summary(balt_death2)
 
+#Life Expectancy in the first quartile is 69.58
+#Neighborhoods with life expectancy below first quartile 
+
+balt_death2 %>%
+  mutate(
+    category = case_when(
+      life_expectancy >= 69.68 ~ "above",
+      life_expectancy <= 69.68 ~ "below",
+    )) %>%
+  
+  filter(category == "below") %>%
+  arrange(category)
   
 
 
@@ -91,6 +126,25 @@ Then write 150-200 words on this document below your code that compares your fin
 **A3.**
 
 ```{r}
+ 
+md_death %>%
+  summary(md_death)
+
+md_death %>%
+  filter(county != "(blank)") %>%
+  arrange(life_expectancy) %>%
+  head(n=20)
+
+md_death %>% 
+  filter(county != "(blank)") %>%
+  arrange(desc(life_expectancy))%>%
+  head(n=20)
+
+us_death %>%
+  summary(us_death)
+
+#The nationwide average life expectancy is 78.31 years for Maryland. Baltimore City had the lowest life expectancy average of 73.04. This is signifgantly lower than the state average. All 20 of the cities had in the lowest life expectancy average were Baltimore City and they were all lower than 70. The Montgomery county values were much higher. All values were higher than 85 years of life expectancy. 
+
 
 
 
@@ -103,9 +157,13 @@ Then produce a short table that summarizes the number of Census tracts above or 
 
 
 ```{r}
-
-
-
+death <- balt_death %>%  
+mutate(
+  category = case_when(
+    `Life Expectancy` >= 73.04 ~ "above",
+    `Life Expectancy` <= 73.04 ~ "below",
+  )) %>% 
+  select('Census Tract Number', 'Life Expectancy', category)
 
 ```
 
