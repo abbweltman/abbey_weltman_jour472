@@ -1,0 +1,75 @@
+---
+title: "abbeyweltman_nb_draft"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+#C - load Lobraries
+install_formats()
+library(tidyverse)
+library(rio)
+library(janitor)
+
+#intro 
+#For my notebook I wanted to identify the correlation between median income, race and the new element of housing prices. In the data sets we have looked at previously we were able to identify regional disparities in median income and race. We have also analyzed population ethnic percentages in these areas. The missing piece that could tie the data notebook together would be the housing prices data. This would indicate the value of the neighborhood and we can see if there are trends with neighborhood value, race and income. Then I could narrow the sites specifically to Baltimore City. 
+
+```
+
+You can add options to executable code like this
+
+```{r}
+#first I want to load the data for the median income in Maryland 
+city_md_income <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/abbeyweltman_notebook/Baltimore_data/city_md_income.csv")
+#My first question was How does the correlation between housing prices and median income vary across different racial or ethnic groups in the dataset? In the City_Md_income data I can identify the 5 cities with the highest income, and the 5 cities with the lowest and then we will crossreference the race trends in these cities. 
+
+top_income <- city_md_income %>% 
+select(place ,median_inc_2020)%>% 
+   arrange(desc(median_inc_2020)) %>% 
+  slice_max(median_inc_2020, n = 5)
+
+low_income <- city_md_income %>% 
+select(place ,median_inc_2020)%>% 
+   arrange(asc(median_inc_2020)) %>% 
+  slice_max(median_inc_2020, n = 5)
+
+# I found that that the cities in maryland with the highest income are Chevy Chase, Martins Additions village, and someserset town. the Ciities with the lowest income are 
+```
+```{r}
+# Now I want to look at the race population in Maryland and compare it to what ive seen in the income data 
+md_race_all_8_13 <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/abbeyweltman_notebook/Baltimore_data/md_race_all_8_13.csv") 
+
+black_pop <- md_race_all_8_13 %>%
+  select(place, x2020_black, x2020_total) %>% 
+  mutate(md_race_all_8_13 = round(x2020_black / x2020_total, 4) * 100) %>%
+  arrange(desc(x2020_black))  %>%
+  head(5)
+
+white_pop <- md_race_all_8_13 %>%
+  select(place, x2020_white, x2020_total) %>% 
+  mutate(md_race_all_8_13 = round(x2020_white / x2020_total, 4) * 100) %>%
+  arrange(desc(x2020_white))  %>%
+  head(5)
+
+hispanic_pop <- md_race_all_8_13 %>%
+  select(place, x2020_hispanic, x2020_total) %>% 
+  mutate(md_race_all_8_13 = round(x2020_hispanic / x2020_total, 4) * 100) %>%
+  arrange(desc(x2020_hispanic))  %>%
+  head(5)
+
+#In this charts we can see which cities have the highest white, black and hispanic population. Now that we know the race demographic of the cities in Maryland we can assess if the housing prices have a similar trend. 
+```
+```{r}
+
+#this will be chunk iwht housing data and I will create table to assess which cities in MD had the highest and lowesr value of home and then assess my findings with the other data
+
+
+
