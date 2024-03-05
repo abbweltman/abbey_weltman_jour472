@@ -25,8 +25,6 @@ library(janitor)
 
 You can add options to executable code like this
 
-
-
 ```{r}
 #this is the Median housing data of cities in Baltimore MD. I will create table to assess which cities in MD had the highest and lowest value of homes and then assess my findings with the other data. I will be looking at the home value of the most current year in each city. So i will sort the data according to the 2019 home value median price. 
 
@@ -39,18 +37,19 @@ high_home_pr <- Median_Price_of_Homes_Sold %>%
 
 low_home_pr <-Median_Price_of_Homes_Sold %>% 
 select(CSA2010,salepr19) %>% 
-   arrange(salepr19) %>% 
-  slice_max(salepr19, n = 5)
+   arrange(salepr19)%>% 
+  slice_min(salepr19, n = 5)
 
 #The 10 regions with the highest Median Price are close together within 15 minutes driving from each other, less than 10 miles. The top three of these cities are North Baltimore, Mount Washington/Coldsprings. Harbor East/little Italy 
 ```
+
 ```{r}
 # Now I want to look at the race population in Maryland and compare it to what i've seen from the median housing price results data In this charts we can see which cities have the highest percent of racial diversity. Now that we know the race demographic of the cities in Maryland we can assess if the housing prices have a similar trend.
 
-Racial_Diversity_Index_1_ <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/abbeyweltman_notebook/Racial_Diversity_Index (1).csv")
+Racial_Diversity_Index_1_ <- read_csv("Racial_Diversity_Index (1).csv")
 
 diverse_CSA <- Racial_Diversity_Index_1_ %>%
-  filter(CSA2020 == c("North Baltimore/Guilford/Homeland")) %>%
+  filter(CSA2020 == c("North Baltimore/Guilford/Homeland" add rest)) %>%
    select(racdiv21,CSA2020) %>%
    arrange(desc(racdiv21)) %>%
   slice_max(racdiv21, n = 10)
@@ -58,10 +57,9 @@ diverse_CSA <- Racial_Diversity_Index_1_ %>%
 # The highest valued neighborhood North Baltimore/Guilford/Homeland had a 61.65% racial diversity index which is high. This indicates that not one specific race can yield a higher valuing home price. Mount Washington/Coldspring had a racial diversity index of 56.72%. Harbor East/Little Italy had a Racial Diversity Index of 63.2%. These values are all similar so I can not conclude if race plays any factor in the value of neighborhoods in Baltimore City. The cities with the highest median housing price did not prove to have either very diverse populations or conservative. For my final notebook I could look into specific race populations and utlize the median income as well. 
 ```
 
-
 ```{r}
 # I want to load the data for the median income in Maryland 
-city_md_income <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/abbeyweltman_notebook/Baltimore_data/city_md_income.csv")
+city_md_income <- read_csv("Baltimore_data/city_md_income.csv")
 #Then with this data I can understand in the median income plays into this as well. One of my research questions was how does the correlation between housing prices and median income vary across different racial or ethnic groups in the dataset? In the City_Md_income data I can identify the 5 cities with the highest income, and the 5 cities with the lowest and then we will crossreference the race trends in these cities. 
 
 top_income <- city_md_income %>% 
@@ -72,11 +70,7 @@ select(place ,median_inc_2020)%>%
 low_income <- city_md_income %>% 
 select(place, median_inc_2020)%>% 
    arrange(median_inc_2020) %>% 
-  slice_max(median_inc_2020, n = 20)
+  slice_min(median_inc_2020, n = 20)
 
 # I found that that the cities in Maryland with the highest income are Chevy Chase, Martins Additions village, and Someserset town. I would be interested to see whether Baltimore City income is related to the neighborhood value. 
 ```
-
-
-
-
