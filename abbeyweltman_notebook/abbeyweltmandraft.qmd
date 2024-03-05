@@ -49,7 +49,7 @@ select(CSA2010,salepr19) %>%
 Racial_Diversity_Index_1_ <- read_csv("Racial_Diversity_Index (1).csv")
 
 diverse_CSA <- Racial_Diversity_Index_1_ %>%
-  filter(CSA2020 == c("North Baltimore/Guilford/Homeland" add rest)) %>%
+  filter(CSA2020 == c("North Baltimore/Guilford/Homeland")) %>%
    select(racdiv21,CSA2020) %>%
    arrange(desc(racdiv21)) %>%
   slice_max(racdiv21, n = 10)
@@ -73,4 +73,9 @@ select(place, median_inc_2020)%>%
   slice_min(median_inc_2020, n = 20)
 
 # I found that that the cities in Maryland with the highest income are Chevy Chase, Martins Additions village, and Someserset town. I would be interested to see whether Baltimore City income is related to the neighborhood value. 
+```
+```{r}
+race_realestate <- Racial_Diversity_Index_1_ %>%
+  inner_join(Median_Price_of_Homes_Sold, by=c("CSA2010"))
+select(CSA2010, racediv21, salepr19)
 ```
