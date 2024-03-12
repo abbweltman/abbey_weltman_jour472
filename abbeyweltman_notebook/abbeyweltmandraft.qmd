@@ -19,14 +19,14 @@ library(rio)
 library(janitor)
 
 #intro 
-#For my notebook I wanted to test if there was correlation between race and housing prices in Baltimore City. In the data sets we have looked at previously we were able to identify regional disparities in median income and race. We have also analyzed population ethnic percentages in these areas. The missing piece that could tie the data notebook together would be the housing prices data. With the regional data median housing price data of Baltimore we can compare the housing value and race population. This would indicate the value of the neighborhood and we can see if there are trends with neighborhood value, race and income.
+#For my notebook I wanted to test if there was correlation between racial diversity and housing prices in Baltimore City. In the data sets we have looked at previously we were able to identify regional disparities in median income and race. We have also analyzed diversity percentages in these areas. The missing piece that could tie the data notebook together would be the housing prices data. With the regional data median housing price data of Baltimore we can compare the housing value and race diversity percentage. This would indicate the value of the neighborhood and we can see if there are trends with neighborhood value, race and income.
 
 ```
 
 You can add options to executable code like this
 
 ```{r}
-#this is the Median housing data of cities in Baltimore MD. I will create table to assess which cities in MD had the highest and lowest value of homes and then assess my findings with the other data. I will be looking at the home value of the most current year in each city. So i will sort the data according to the 2019 home value median price. 
+#this is the Median housing data of Baltimore City MD. I will create table to assess which cities in MD had the highest and lowest value of homes and then assess my findings with the other data. I will be looking at the home value of the most current year in each city. So i will sort the data according to the 2019 home value median price. 
 
 Median_Price_of_Homes_Sold <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/abbeyweltman_notebook/Median_Price_of_Homes_Sold.csv")
 
@@ -35,47 +35,56 @@ high_home_pr <- Median_Price_of_Homes_Sold %>%
    arrange(desc(salepr19)) %>%
   slice_max(salepr19, n = 5)
 
+#The 5 regions with the highest median housing prices are North Baltimore/Guilford/Homeland, Mount Washington/Coldsprings. Harbor East/little Italy, South Baltimore and Canton. I also found that The 5 regions with the highest Median Price are close together within 15 minutes driving from each other, less than 10 miles. . 
+
 low_home_pr <-Median_Price_of_Homes_Sold %>% 
 select(CSA2010,salepr19) %>% 
    arrange(salepr19)%>% 
   slice_min(salepr19, n = 5)
 
-#The 10 regions with the highest Median Price are close together within 15 minutes driving from each other, less than 10 miles. The top three of these cities are North Baltimore, Mount Washington/Coldsprings. Harbor East/little Italy 
+#The 5 regions with the lowest median housing prices are Clifton-Berea, Cherry Hill, Southwest Baltimore, Greater Rosemont, Sandtown-Winchester/Harlem Park. 
 ```
 
 ```{r}
-# Now I want to look at the race population in Maryland and compare it to what i've seen from the median housing price results data In this charts we can see which cities have the highest percent of racial diversity. Now that we know the race demographic of the cities in Maryland we can assess if the housing prices have a similar trend.
+# Now I want to look at the race diversity percentage in these regions and compare it to what i've seen from the median housing price results data In this charts we can see which cities have the highest percent of racial diversity. I am going to filter it so we can only see the results for the highest and lowers cities I obtained in the previous table. 
 
 Racial_Diversity_Index_1_ <- read_csv("Racial_Diversity_Index (1).csv")
 
-diverse_CSA <- Racial_Diversity_Index_1_ %>%
-  filter(CSA2020 == c("North Baltimore/Guilford/Homeland")) %>%
+diverse_CSA_high <- Racial_Diversity_Index_1_ %>%
+  filter(CSA2010 == c("North Baltimore/Guilford/Homeland", "Mount Washington/Coldspring", "Harbor East/Little Italy", "South Baltimore", "Canton")) %>%
    select(racdiv21,CSA2020) %>%
-   arrange(desc(racdiv21)) %>%
-  slice_max(racdiv21, n = 10)
+   arrange(desc(racdiv21)) 
 
-# The highest valued neighborhood North Baltimore/Guilford/Homeland had a 61.65% racial diversity index which is high. This indicates that not one specific race can yield a higher valuing home price. Mount Washington/Coldspring had a racial diversity index of 56.72%. Harbor East/Little Italy had a Racial Diversity Index of 63.2%. These values are all similar so I can not conclude if race plays any factor in the value of neighborhoods in Baltimore City. The cities with the highest median housing price did not prove to have either very diverse populations or conservative. For my final notebook I could look into specific race populations and utlize the median income as well. 
-```
+diverse_CSA_low <- Racial_Diversity_Index_1_ %>%
+  filter(CSA2010 == c("Clifton-Berea", "Cherry Hill", "Southwest Baltimore", "Greater Rosemont", "Sandtown-Winchester/Harlem Park")) %>%
+   select(racdiv21,CSA2020) %>%
+   arrange(desc(racdiv21)) 
 
-```{r}
-# I want to load the data for the median income in Maryland 
-city_md_income <- read_csv("Baltimore_data/city_md_income.csv")
-#Then with this data I can understand in the median income plays into this as well. One of my research questions was how does the correlation between housing prices and median income vary across different racial or ethnic groups in the dataset? In the City_Md_income data I can identify the 5 cities with the highest income, and the 5 cities with the lowest and then we will crossreference the race trends in these cities. 
-
-top_income <- city_md_income %>% 
-select(place ,median_inc_2020)%>% 
-   arrange(desc(median_inc_2020)) %>% 
-  slice_max(median_inc_2020, n = 20)
-
-low_income <- city_md_income %>% 
-select(place, median_inc_2020)%>% 
-   arrange(median_inc_2020) %>% 
-  slice_min(median_inc_2020, n = 20)
-
-# I found that that the cities in Maryland with the highest income are Chevy Chase, Martins Additions village, and Someserset town. I would be interested to see whether Baltimore City income is related to the neighborhood value. 
+# The highest valued neighborhood North Baltimore/Guilford/Homeland had a 61.65% racial diversity index which is high. Mount Washington/Coldspring had a racial diversity index of 56.72%. Harbor East/Little Italy had a Racial Diversity Index of 63.2%. These values are all similar so I can not conclude if race plays any factor in the value of neighborhoods in Baltimore City. The cities with the highest median housing price did not prove to have either very diverse populations or conservative. 
 ```
 ```{r}
+#In this table I combined the racial diversity index with the median prices of homes sold. In this table you can see side by side the regions median housing price and racial diversity percentage. I arranged the chart by sale price so we could evaluate of the highest and lowest valued neighborhoods had corresponding evidence of racial diversity in there region. 
+
 race_realestate <- Racial_Diversity_Index_1_ %>%
-  inner_join(Median_Price_of_Homes_Sold, by=c("CSA2010"))
-select(CSA2010, racediv21, salepr19)
+  inner_join(Median_Price_of_Homes_Sold, by=c("CSA2010"))%>%
+select(CSA2010, racdiv21, salepr19)%>%
+arrange(desc(racdiv21))
+
+# the highest home price regions, North Baltimore/Guilford/Homeland placed 12th in racial diversity. Mount Washington/Coldspring placed 16th, Harbor East/Little Italy placed 11th, South Baltimore placed 37th and Canton placed 30th this was out of 55 regions. 
+
+#For the lowest median home price regions Clifton-Berea ranked 42nd, Cherry Hill ranked 40th, Southwest Baltimore ranked 24th, Greater Rosemont ranked 54th and Sandtown-Winchester/Harlem Park ranked 51st. 
+
+#The results indicate that the areas with the lower median home price have less diversity. Almost all the lowest median regions were in the bottom 10 for racial diversity.  
+```
+
+
+```{r}
+#Results Reporting Memo
+#In my research, I wanted to identify if there was any correlation between racial diversity and median housing prices in Baltimore City Regions. The first data I looked at was the Median price of homes sold in Baltimore City regions. This came from the Baltimore Neighborhood Alliance. I sorted them into two tables labeled high_home_pr and low_home_pr. With this data, I was able to attain the regions with the highest and lowest median housing prices.  I was also able to identify trends within these results and saw that the top 5 regions were within a 10-mile radius of each other. I then wanted to test the median home value with the racial diversity of the region. First I filtered the data to only show me the racial diversity percentage of the five highest and lowest median home price regions. I labeled these two tables diverse_CSA_high and diverse_CSA_low. Then I took this a step further in the next data table by combining the two sets to see the median home price next to the racial diversity percentage next to each other. In this table, labeled race_realestate, I was able to see how regions ranked amongst each other in diversity and neighborhood home value. With this combined table I noticed the trend that the regions with higher diversity percentages typically had a higher median home price value. The regions with lower median home price values had some of the lowest racial diversity percentages. Almost all the lowest median home price regions were in the bottom 10 for racial diversity. This trend indicates that more diversity adds value to neighborhoods in these specific regions of Baltimore City. I also included the highest the lowest median income of Maryland cities. Although this is not specific to Baltimore like the rest of the data it allows me to see if the wealth in the state is region and then I can narrow my sights on the specific regions in the data. There is a significant margin of error here that has to be considered. The data can not speak for the specific ethnic demographic makeup of each region and I would want to apply that data to see if these populations alter the results of my study. It is also possible that higher diversity could also be a result of a more densely populated city. I also could do more research on the economic disparities of these regions. 
+
+#Tweets
+
+#1: Baltimore Data suggests Low diversity in Regions lowers Home Value 
+#2: Higher Diversity Could Mean Increased Neighborhood Value In Baltimore City, Data Shows
+
 ```
