@@ -28,7 +28,7 @@ You can add options to executable code like this
 ```{r}
 #this is the Median housing data of Baltimore City MD. I will create table to assess which cities in MD had the highest and lowest value of homes and then assess my findings with the other data. I will be looking at the home value of the most current year in each city. So i will sort the data according to the 2019 home value median price. 
 
-Median_Price_of_Homes_Sold <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/abbeyweltman_notebook/Median_Price_of_Homes_Sold.csv")
+Median_Price_of_Homes_Sold <- read_csv("Median_Price_of_Homes_Sold.csv")
 
 high_home_pr <- Median_Price_of_Homes_Sold %>% 
  select(CSA2010,salepr19) %>%
@@ -60,8 +60,9 @@ diverse_CSA_low <- Racial_Diversity_Index_1_ %>%
    select(racdiv21,CSA2010) %>%
    arrange(desc(racdiv21)) 
 
-# The highest valued neighborhood North Baltimore/Guilford/Homeland had a 61.65% racial diversity index which is high. Mount Washington/Coldspring had a racial diversity index of 56.72%. Harbor East/Little Italy had a Racial Diversity Index of 63.2%. These values are all similar so I can not conclude if race plays any factor in the value of neighborhoods in Baltimore City. The cities with the highest median housing price did not prove to have either very diverse populations or conservative. 
+# The highest valued neighborhood North Baltimore/Guilford/Homeland had a 61.65% racial diversity index which is high. Mount Washington/Coldspring had a racial diversity index of 56.72%. Harbor East/Little Italy had a Racial Diversity Index of 63.2%. These values are all similar so I can not conclude if race plays any factor in the value of neighborhoods in Baltimore City. The cities with the highest median housing price did not prove to have either very diverse populations or conservative. The cities with the lower median housing prices had lower racial diversity precentages most of the time.  
 ```
+
 ```{r}
 #In this table I combined the racial diversity index with the median prices of homes sold. In this table you can see side by side the regions median housing price and racial diversity percentage. I arranged the chart by sale price so we could evaluate of the highest and lowest valued neighborhoods had corresponding evidence of racial diversity in there region. 
 
@@ -76,13 +77,20 @@ write_csv(race_realestate,"race_realestate.csv")
 
 #For the lowest median home price regions Clifton-Berea ranked 42nd, Cherry Hill ranked 40th, Southwest Baltimore ranked 24th, Greater Rosemont ranked 54th and Sandtown-Winchester/Harlem Park ranked 51st. 
 
-#The results indicate that the areas with the lower median home price have less diversity. Almost all the lowest median regions were in the bottom 10 for racial diversity.  
+#The results indicate that the areas with the lower median home price have less diversity. Almost all the lowest median regions were in the bottom 10 for racial diversity.
 ```
 
 
 ```{r}
+#here is the link to the datawrapper graphic I have created. It is a scatter plat that shows how the diversity and median housing price for each county compare to eachother https://datawrapper.dwcdn.net/scuWh/1/ this is the embed coded
+
+library((DatawRappr)
+<iframe title="Neighborhood Value and Diversity in Regions In Baltimore" aria-label="Scatter Plot" id="datawrapper-chart-scuWh" src="https://datawrapper.dwcdn.net/scuWh/1/" scrolling="no" frameborder="0" style="border: none;" width="600" height="1431" data-external="1"></iframe>        
+```
+
+```{r}
 #Results Reporting Memo
-#In my research, I wanted to identify if there was any correlation between racial diversity and median housing prices in Baltimore City Regions. The first data I looked at was the Median price of homes sold in Baltimore City regions. This came from the Baltimore Neighborhood Alliance. I sorted them into two tables labeled high_home_pr and low_home_pr. With this data, I was able to attain the regions with the highest and lowest median housing prices.  I was also able to identify trends within these results and saw that the top 5 regions were within a 10-mile radius of each other. I then wanted to test the median home value with the racial diversity of the region. First I filtered the data to only show me the racial diversity percentage of the five highest and lowest median home price regions. I labeled these two tables diverse_CSA_high and diverse_CSA_low. Then I took this a step further in the next data table by combining the two sets to see the median home price next to the racial diversity percentage next to each other. In this table, labeled race_realestate, I was able to see how regions ranked amongst each other in diversity and neighborhood home value. With this combined table I noticed the trend that the regions with higher diversity percentages typically had a higher median home price value. The regions with lower median home price values had some of the lowest racial diversity percentages. Almost all the lowest median home price regions were in the bottom 10 for racial diversity. This trend indicates that more diversity adds value to neighborhoods in these specific regions of Baltimore City. I also could include the highest the lowest median income of Maryland cities. Although this is not specific to Baltimore like the rest of the data it allows me to see if the wealth in the state is region and then I can narrow my sights on the specific regions in the data. There is a significant margin of error here that has to be considered. The data can not speak for the specific ethnic demographic makeup of each region and I would want to apply that data to see if these populations alter the results of my study. It is also possible that higher diversity could also be a result of a more densely populated city. I also could do more research on the economic disparities of these regions. 
+#In my research, I wanted to identify if there was any correlation between racial diversity and median housing prices in Baltimore City Regions. The first data I looked at was the Median price of homes sold in Baltimore City regions. This came from the Baltimore Neighborhood Indicators Alliance. I sorted them into two tables labeled high_home_pr and low_home_pr. With this data, I was able to attain the regions with the highest and lowest median housing prices.  I was also able to identify trends within these results and saw that the top 5 regions were within a 10-mile radius of each other. I then wanted to test the median home value with the racial diversity of the region. First I filtered the data to only show me the racial diversity percentage of the five highest and lowest median home price regions. I labeled these two tables diverse_CSA_high and diverse_CSA_low. Then I took this a step further in the next data table by combining the two sets to see the median home price next to the racial diversity percentage next to each other. In this table, labeled race_realestate, I was able to see how regions ranked amongst each other in diversity and neighborhood home value. With this combined table I noticed the trend that the regions with higher diversity percentages typically had a higher median home price value. The regions with lower median home price values had some of the lowest racial diversity percentages. Almost all the lowest median home price regions were in the bottom 10 for racial diversity. This trend indicates that more diversity adds value to neighborhoods in these specific regions of Baltimore City. I also could include the highest the lowest median income of Maryland cities. Although this is not specific to Baltimore like the rest of the data it allows me to see if the wealth in the state is region and then I can narrow my sights on the specific regions in the data. There is a significant margin of error here that has to be considered. The data can not speak for the specific ethnic demographic makeup of each region and I would want to apply that data to see if these populations alter the results of my study. It is also possible that higher diversity could also be a result of a more densely populated city. I also could do more research on the economic disparities of these regions. 
 
 #Tweets
 
