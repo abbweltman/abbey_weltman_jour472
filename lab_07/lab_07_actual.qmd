@@ -20,10 +20,10 @@ library(dplyr)
 
 ## Load data
 ```{r setup, echo=FALSE}
-arcos <- read_csv("data/arcos.csv")
-county_population_2014 <- read_csv("data/county_population_2014.csv")
-state_crosswalk <- read_csv("data/state_crosswalk.csv")
-state_population_2014 <- read_csv("data/state_population_2014.csv")
+arcos <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/lab_07/data/arcos.csv")
+county_population_2014 <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/lab_07/data/county_population_2014.csv")
+state_crosswalk <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/lab_07/data/state_crosswalk.csv")
+state_population_2014 <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/lab_07/data/state_population_2014.csv")
 
 ```
 
@@ -52,10 +52,7 @@ There are four tables in the data folder.
   mutate(pills_per_person = total_pills/total_population_2014)%>%
   arrange(desc(pills_per_person))
 
-
-
-
-
+#Norton City total pills: 10555170
 
 
 ```
@@ -71,9 +68,32 @@ Which U.S. state saw the highest percentage increase in opiod pills from 2006 to
 
 --Write a sentence that could be dropped in as the lede of a news story from the finding in question two. 
 ```{r setup, echo=FALSE}
+total_2006 <- arcos %>%
+  filter(year == 2006) %>% 
+rename(total_pills_2006 =total_pills)
+
+total_2014 <- arcos %>%
+  filter(year == 2014) %>%
+rename(total_pills_2014= total_pills)
 
 
+acros_combo <- total_2006 %>%
+    inner_join(total_2014, by=c("countyfips", "buyer_county", "buyer_state")) %>%
+    inner_join(state_crosswalk,  by=c("buyer_state" = "state_abb")) 
 
+acros_combo %>%
+  select(total_pills_2006, total_pills_2014, state_name) %>%
+  mutate(percentage_change =((total_pills_2014 - total_pills_2006 )/ total_pills_2006 ))
+
+five_highest <- acros_combo %>%
+select(total_pills_2006, total_pills_2014, state_name) %>%
+mutate(percentage_change =((total_pills_2014 - total_pills_2006 )/ total_pills_2006 )) %>%
+slice_max(percentage_change, n=5)
+
+five_lowest <- acros_combo %>%
+select(total_pills_2006, total_pills_2014, state_name) %>%
+mutate(percentage_change =((total_pills_2014 - total_pills_2006 )/ total_pills_2006 )) %>%
+slice_min(percentage_change, n=5)
 
 #Los Angeles
 ```
