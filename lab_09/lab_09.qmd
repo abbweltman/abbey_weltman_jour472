@@ -11,8 +11,19 @@ When you are finished, commit changes and push to your personal GitHub repo, the
 
 ## Load libraries and establish settings
 **Task**: Load janitor and the tidyverse and sf
+```{r}
+library(tidyverse)
+library(janitor)
+library(sf)
+```
+
 
 ## Load data
+```{r}
+baltimore_homicides <- read_rds("data/baltimore_homicides.rds")
+baltimore_tract_demographics <- read_rds("data/baltimore_tract_demographics.rds")
+baltimore_tract_shapefiles <- read_rds("data/baltimore_tract_shapefiles.rds")
+```
 
 You have been given two spatial dataframes and one regular dataframe to load.  The dataframes are:
 
@@ -31,5 +42,48 @@ You have been given two spatial dataframes and one regular dataframe to load.  T
 * Output at least one map visualization pertinent to your finding. 
 
 **A1** 
+```{r}
+
+majority_white <- baltimore_tract_demographics %>%
+  mutate(pct_white = white_pop/total_pop) %>%
+  select(geoid,name,pct_white) %>%
+  mutate(neighborhood_type = case_when(
+    pct_white > .50 ~ "majority_white",
+    TRUE ~ "not_majority_white"
+  ))
+
+
+majority_white <- majority_white %>%
+  inner_join(baltimore_tract_shapefiles) %>%
+  st_as_sf()
+
+
+shootings <- baltimore_homicides %>%
+  st_join(majority_white_tracts) %>%
+  as_tibble()
+
+arrest_status <- shootings %>%
+  group_by(neighborhood_type,disposition) %>%
+  count() %>%
+pivot_wider(names_from=disposition, values_from=n) %>%
+  clean_names() %>%
+  mutate(total_shootings = closed_by_arrest+closed_without_arrest+open_no_arrest) %>%
+  mutate(unsolved = open_no_arrest + closed_without_arrest) %>%
+  mutate(solved = closed_by_arrest/total_shootings*100)
+
+arrest_status
+
+ggplot() +
+  geom_sf(data=baltimore_tract_shapefiles) +
+  geom_sf(data=baltimore_homicides)
+
+#For not majority white the arrest rate was 33%  for Majority white the arrest rate was 53% 
+
+#Homicides occurring in majority white Census tracts in Baltimore are solved at a significantly higher rate compared to those in non-majority white areas, according to an analysis of the city crime data. The findings reveal a notable disparity in the outcomes of shooting homicide investigations across different demographic areas in the city.
+
+#In an investigation into the disposition of homicide cases based on Baltimore's Census tracts, it was found that shootings in majority white neighborhoods resulted in arrests approximately 20% more often than those in non-majority white neighborhoods. Specifically, the arrest rate for shootings in majority white areas stood at 53%, while in non-majority white areas, it was 33%. This suggests that law enforcement outcomes vary significantly depending on the racial demographics of the neighborhood where the crime occurs.
+
+#These findings indicate a potential disparities in law enforcement responses and criminal justice outcomes based on the racial composition of neighborhoods in Baltimore. The map also shows the "black Butterfly where black communities have higher rates of reported crime. The data highlights an issue including community trust, policing practices, and access to resources for crime investigation and prevention.
+```
 
 

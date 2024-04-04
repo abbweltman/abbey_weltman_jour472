@@ -38,7 +38,7 @@ This is a special kind of dataframe called an "SF" dataframe, meaning it has loc
 
 ```{r}
 
-pg_elementary_school_locations <- readRDS("~/Documents/GitHub/data_journalism_class/04_labs/lab_09/assets/pg_elementary_school_locations.rds")
+pg_elementary_school_locations <- read_rds("assets/data/pg_elementary_school_locations.rds")
 
 pg_elementary_school_locations
 
@@ -59,8 +59,8 @@ Let's load an outline of the county to make it more explicit. Unlike the schools
 
 
 ```{r}
-pg_county <- readRDS("~/Documents/GitHub/data_journalism_class/04_labs/lab_09/assets/pg_county.rds")
 
+pg_county <- read_rds("assets/data/pg_county.rds")
 
 ```
 
@@ -115,8 +115,9 @@ leaflet() %>%
 We can join information about each school with our geographic data, and represent that on a map.  In this case, we're going to load data about the "attendance rate" from the Maryland Dept. of Education for each Prince George's County elementary school. It ranges from 99 percent to 79 percent.
 
 ```{r}
-attendance <- readRDS("~/Documents/GitHub/data_journalism_class/04_labs/lab_09/assets/attendance.rds")
+attendance <- read_rds("assets/data/attendance.rds")
 
+attendance
 ```
 
 Now let's join this attendance dataframe to our spatial dataframe. 
@@ -157,8 +158,9 @@ First, let's load a spatial dataframe of Census tracts with income information a
 
 ```{r}
 
-pg_tract_income <- readRDS("~/Documents/GitHub/data_journalism_class/04_labs/lab_09/assets/pg_tract_income.rds")
+pg_tract_income <- read_rds("assets/data/pg_tract_income.rds")
 
+pg_tract_income
 
 ```
 
@@ -224,16 +226,6 @@ And finally our answer.  Schools with high attendance are located in Census trac
 Answer this question in English: Write in Elms
 
 Develop two questions that you could answer with a spatial join as described in this chapter, outside of the domain of education.  Briefly describe the two geographic dataframes you would need to answer each question.   
-
-1. You could use a spatial join to determine if you want to see the demographics in an area. I could ask, what are the demographics of the population living within near shopping mall? I would use a ggplot to represent Shopping mall locations as points. Then I would take the demographic data such as population density and age to represent as. I would use the gg plot and the Sf function to create a plot with a scale to show what demographics are predominately in that area 
-
-2. I could also use a spatial join to determine questions about Urban planning, I could determine How many parks are within a 1-mile radius of each residential neighborhood in a city? For this question, you would need two geographic dataframes including residential neighborhoods outlines representing boundaries of different neighborhoods and 
-Parks points representing the locations of all the parks within the city. I would use the leaflet for this. 
-
-
-
-
-
 
 
 
