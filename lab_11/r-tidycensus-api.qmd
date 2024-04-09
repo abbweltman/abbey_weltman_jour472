@@ -226,7 +226,7 @@ join_pct <- inner_join(male, total_pop_2020, by = c( "NAME" = "state" )) %>%
    mutate(pct_whole = (estimate / total_population) *100 )%>%
   arrange(desc(pct_whole))
     
-#Alaska has the largest percent ofmale populatio. It was 52.45% of the total population.
+#Alaska has the largest percent of males in the states population. It was 52.45% of the total population.
 ```
 
 Write code to answer this question, from the American Community Survey. 
