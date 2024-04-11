@@ -59,7 +59,7 @@ To get that for the Census, you need to [apply for an API key with the Census Bu
 In the code block below, replace YOUR KEY HERE with your key you get by email.  It's a long string of letters and numbers, like this: 549950d36c22ff16455fe196bbbd01d63cf. Don't use this one. It won't work. Use your own. 
 
 ```{r}
-census_api_key("8be73b673e80b7654a9b35fbb31bbd53774f1706", install=TRUE, overwrite = TRUE)
+census_api_key("PUT YOUR OWN KEY HERE!!!", install=TRUE, overwrite = TRUE)
 
 
 ```
@@ -217,16 +217,9 @@ As you can see, some of the error bars are quite wide. Some are narrow. But if t
 Run this code to load a table of variables available in the American Community Survey.
 
 ```{r}
-male <- get_acs(geography = "state",
-              variables = c(male_population = "B01001_002"),
-              year = 2020) %>%
-arrange(desc(estimate))
-    
-join_pct <- inner_join(male, total_pop_2020, by = c( "NAME" = "state" )) %>%
-   mutate(pct_whole = (estimate / total_population) *100 )%>%
-  arrange(desc(pct_whole))
-    
-#Alaska has the largest percent of males in the states population. It was 52.45% of the total population.
+
+acs_variable <- load_variables(dataset = "acs5", year=2020)
+
 ```
 
 Write code to answer this question, from the American Community Survey. 
@@ -234,3 +227,14 @@ Write code to answer this question, from the American Community Survey.
 Which US state has the largest male population. 
 
 What is the state and what is the percentage? Post the state, the population AND the code you wrote to produce it on ELMS. Use the American Community Survey for this.
+
+```{r}
+male <- get_acs(geography = "state",
+              variables = c(male_population = "B01001_002", "B01001_001"),
+              year = 2020) %>%
+  arrange(desc(estimate))
+
+md
+
+#B01001 SEX BY AGE
+```

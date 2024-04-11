@@ -6,8 +6,6 @@ Here are a few refresher exercises for doing math calculations within the code.
 
 ```{r}
 library(tidyverse)
-library(tidycensus)
-library(janitor)
 ```
 
 We'll import a dataset of median household income in Baltimore for the 2010, 2016 and 2020 surveys. The data is in the data folder in this chapter's pre-lab directory. We'll use this to explore ways to create new information from existing data.
@@ -24,10 +22,7 @@ baltcity_income<- read_csv("https://raw.githubusercontent.com/wellsdata/data_jou
 Let's see which neighborhoods are the largest on a percentage basis in 2020 
 
 ```{r}
-baltcity_income_2020 <- baltcity_income %>%
- select(Census, Neighborhood, x2020)%>%
-  mutate(pct_whole = scales::percent(x2020 / sum(x2020, na.rm = TRUE), accuracy = 0.2))%>%
-  arrange(desc(pct_whole))
+
 
 ```
 

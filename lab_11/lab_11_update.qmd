@@ -1,0 +1,118 @@
+#lab_11
+Rob Wells, April 11, 2024
+
+## About this lab
+
+To complete this lab, you need to:
+* write code in empty codeblocks provided to answer questions included (look for **Q**).
+* write out the answer in the form of a complete sentence in the space given (look for **A**).
+
+When you are finished, commit changes and push to your personal GitHub repo, then submit the URL to this document on ELMS.
+
+## Overview
+
+There are three main goals of this lab:
+
+* learn to make use of R packages that can access data via third-party APIs.
+* learn to develop a quick and accurate understanding of what data can be obtained via third-party APIs. 
+* learn to develop questions that can be answered using that data, and avoid developing questions that cannot. 
+
+## APIs to choose from
+ 
+
+* tidycensus - for asking census-related questions.
+
+## Load libraries
+
+**Task**: load the tidyverse and janitor.  Uncomment the one other package you plan to work with.  Do not choose more than one API package.
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(tidycensus)
+
+```
+
+## Get setup to access third-party APIs
+
+### tidycensus
+
+Use the U.S. census access token you created for this week's lab.  You can store it by editing the block below to replace 'YOUR KEY HERE' with your actual key, a long string of letters and numbers. If you need to sign up for another one, you can do so here:  [apply for an API key with the Census Bureau](https://api.census.gov/data/key_signup.html). 
+
+```{r}
+census_api_key( "8be73b673e80b7654a9b35fbb31bbd53774f1706", install=TRUE, overwrite = TRUE)
+```
+
+
+
+### tidycensus
+
+This package is designed to help you pull demographic information about different U.S. geographies.
+
+* Basic usage https://walker-data.com/tidycensus/articles/basic-usage.html
+* Functions: https://walker-data.com/tidycensus/reference/index.html
+* More details https://walker-data.com/tidycensus/
+
+Sample question: which state saw the largest growth in Hispanic population between 2010 and 2020?
+
+```{r}
+
+acs_vars <- load_variables( dataset = "acs5", year = 2020) 
+  
+ fem <- get_acs(geography = "state",
+              variables = c(female_population = "B01001_026"),
+              year = 2020) 
+  pop <- get_acs(geography = "state",
+              variables = c(total_population = "B01001_001"),
+              year = 2020) 
+ 
+ join_pct <- inner_join(fem, pop, by = c( "NAME")) %>%
+   mutate(pct_whole = (estimate / total_population) *100 )%>%
+  arrange(desc(pct_whole))
+```
+
+### Develop and answer questions
+
+**Task** Develop two different *interesting* questions that you can answer with the data. Run them by your professor before getting started on answering, to ensure they're sufficiently interesting and possible with the data. 
+```{r}
+# 1. What state has the largest and smallest population of women in the U.S.?
+# 2. How many white women in there 20s live in New York 
+```
+
+**Task** Write code to answer the questions.  Write up a sentence with each of your findings. Produce at least one visualization to support one of your findings. 
+```{r}
+ # I want to see where I should live if I want to have female roomantes after college!!!
+
+ fem <- get_acs(geography = "state",
+              variables = c(female_population = "B01001_026"),
+              year = 2020) %>% 
+              mutate(fem_estimate = estimate)
+
+  pop <- get_acs(geography = "state",
+              variables = c(total_population = "B01001_001"),
+              year = 2020) %>% 
+              mutate(total_estimate = estimate)
+ 
+ join_pct <- fem %>% 
+   inner_join(pop, by = c("NAME"))%>%
+   mutate(pct_whole = ( fem_estimate / total_estimate) *100 )%>%
+  arrange(desc(pct_whole))%>%
+select(NAME, fem_estimate, total_estimate, pct_whole )%>%
+   arrange(desc(pct_whole))
+ 
+#D.C has the largest population of women out of the total percentage with a pct_whole of 52.5%
+
+```
+
+```{r}
+ NY <- get_acs(geography = "county",
+              variables = c(population_of_women_20_24 = "B01001A_023", population_of_women_25_29 = "B01001A_024"),
+              state = "NY",
+              year = 2020) 
+
+NY <- NY %>%
+sum(NY$estimate)
+
+#the total amount of women in their 20s that live in NY is 792681. 
+```
+
