@@ -1,0 +1,112 @@
+#Tutorial, April 16, 2024
+
+
+```{r}
+library(tidyverse)
+library(janitor)
+
+###
+# tidycensus
+###
+library(tidycensus)
+
+```
+
+
+```{r}
+census_api_key("8be73b673e80b7654a9b35fbb31bbd53774f1706", install=TRUE, overwrite=TRUE)
+```
+
+```{r}
+
+###
+# Load ACS variables
+###
+
+acs_vars <- load_variables("acs5", year=2020)
+
+###
+# Get median household income for Maryland 2020
+###
+
+md <- get_acs(geography = "county",
+              variables = c(median_income = "B19013_001"),
+              state = "MD",
+              year = 2020) 
+
+
+```
+
+#Load Data
+```{r}
+
+asian_2020 <- get_acs(geography = "state",
+              variables = c(asian_divide = "B02001_005"),
+              year = 2020) %>% 
+  rename(estimate_2020 = estimate)
+
+asian_2010 <- get_acs(geography = "state",
+              variables = c(asian_divide = "B02001_005"),
+              year = 2010) %>% 
+  rename(estimate_2010 = estimate)
+
+```
+
+
+#Join the two data frames together, create a percentage change column
+```{r}
+join_asian <- inner_join(asian_2010, asian_2020, variable, by = c( "GEOID", "NAME")) %>%
+  select(GEOID,NAME, estimate_2010, estimate_2020)%>%
+    mutate(pct_whole = (estimate_2020 - estimate_2010 / estimate_2010) *100 )%>%
+  arrange(desc(pct_whole))
+
+```
+
+#Pivot Wider
+```{r}
+
+# See vignette("pivot") for examples and explanation
+
+# Generate column names from multiple variables
+us_rent_income
+us_rent_income %>%
+  pivot_wider(
+    names_from = variable,
+    values_from = c(estimate, moe)
+  )
+
+# You can control whether `names_from` values vary fastest or slowest
+# relative to the `values_from` column names using `names_vary`.
+us_rent_income %>%
+  pivot_wider(
+    names_from = variable,
+    values_from = c(estimate, moe),
+    names_vary = "slowest"
+  )
+
+```
+
+
+#2: Male Population and Pivot Wider
+
+```{r}
+#Calculate the males percentage of the total population
+# male_population = "B01001_002"
+# total_pop = "B01001_001"
+
+
+male <- get_acs(geography = "state",
+variables = c(male_population = "B01001_002", total_population = "B01001_001")
+              year = 2020) %>%
+  rename( state = NAME)%>%
+select(variable, estimate)%>%
+ pivot_wider(
+    names_from = variable,
+    values_from = c(estimate, moe),
+    names_vary = "slowest"
+  )
+
+
+```
+
+
