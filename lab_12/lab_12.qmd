@@ -1,5 +1,4 @@
 #lab_12
-Sean Mussenden, Aug 16, 2022
 
 ## About this lab
 
@@ -21,10 +20,12 @@ You will do this by scraping data from the Maryland State Board of Election webs
 You can find election results here: https://elections.maryland.gov/elections/2022/general_results/
 
 ```{r}
+library(rvest)
 library(tidyverse)
 library(janitor)
 library(tidycensus)
-library(rvest)
+library(dplyr)
+options(scipen=999)
 ```
 
 **Task**: load the tidyverse, tidycensus, rvest and janitor.  Store your Census api key.
@@ -36,11 +37,71 @@ census_api_key("8be73b673e80b7654a9b35fbb31bbd53774f1706", install=TRUE, overwri
 **Q1** Which candidate, Dan Cox or Wes Moore, got the lowest percentage of their votes on Election Day? What does that suggest? Write up your answer in a sentence. 
 **A1**
 ```{r}
+election_url<-"https://elections.maryland.gov/elections/2022/general_results/gen_results_2022_1.html"
 
+results <- election_url %>%
+  read_html() %>%
+  html_table()
+
+results <- results[[1]] %>%
+  clean_names() %>%
+   mutate(across(c(3,4,5,7,8), parse_number)) %>% 
+  mutate(pct_election_day = round((election_day/total)*100,2)) %>% 
+  slice(-7) %>% 
+  arrange(pct_election_day) %>% 
+  select(name,pct_election_day)
 ```
 
 **Q2** How many counties did Chris Van Hollen win in Maryland's Senate race? 
 **A2** 
+```{r}
+senate_url <- "https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_4_1.html"
+
+senate_results <- senate_url %>%
+  read_html() %>%
+  html_table()
+
+senate_results <- senate_results[[1]] %>%
+  clean_names() %>%
+   mutate(across(c(2:6), parse_number)) %>% 
+   slice(-25) 
+
+senate_results<-senate_results %>% 
+mutate(winner=case_when(chris_van_hollen_democratic > chris_chaffee_republican ~ "van_hollen_win", chris_chaffee_republican > chris_van_hollen_democratic ~ "chaffee_win")) %>% 
+  select(jurisdiction,winner) %>% 
+  filter(winner == "van_hollen_win")
+```
 
 **Q3** What percentage of the vote did Chris Van Hollen in Maryland's wealthiest county by median income. (You must use the Tidycensus package to answer this question).
 **A3** 
+```{r}
+d <- get_acs(geography = "county",
+              variables = c(median_income = "B19013_001"),
+              state = "MD",
+              year = 2020) %>% 
+arrange(desc(estimate)) 
+#The wealthiest county by median income is Howard County
+
+senate_url <- "https://elections.maryland.gov/elections/2022/general_results/gen_detail_results_2022_4_1.html"
+
+senate_results_county <- senate_url %>%
+  read_html() %>%
+  html_table()
+
+senate_results_county <- senate_results_county[[1]] %>%
+  clean_names() %>%
+   mutate(across(c(2:6), parse_number)) %>% 
+   slice(-25) 
+
+senate_results_county<-senate_results_county %>% 
+  mutate(total=chris_van_hollen_democratic+chris_chaffee_republican+scottie_griffin_write_in_democratic+andrew_j_wildman_write_in_unaffiliated+other_write_ins) %>% 
+  select(jurisdiction,chris_van_hollen_democratic,total) %>% 
+  filter(jurisdiction == "Howard") %>% 
+  mutate((pct_wealthy=chris_van_hollen_democratic/total)*100)
+
+#Chris Van Hollen won 71% of the votes in Howard County.
+
+```
+
+```
+
