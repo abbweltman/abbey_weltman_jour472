@@ -11,6 +11,19 @@ library(sf)
 library(leaflet)
 ```
 
+Exploring Business Development in Baltimore: A Geographic Analysis
+
+In this notebook I will look into the dynamics of business development in Baltimore, Maryland. By examining datasets related to the distribution of new businesses across different regions of Baltimore, we aim to uncover insights into the patterns and trends of entreprenurial activity within the city.
+
+My analysis focuses on several key aspects:
+
+1. Spatial Distribution of New Businesses: We investigate which regions of Baltimore have the highest concentration of new businesses, providing valuable insights into areas experiencing significant entrepreneurial activity.
+
+2.Percentage of New Businesses Relative to Total: By comparing the percentage of new businesses to the total number of businesses in each region, we gain a deeper understanding of the prevalence of entrepreneurial ventures within the broader business landscape of Baltimore.
+
+3.Analysis of Business Development: I will explore how business development has evolved over recent years by examining changes in the percentage of new businesses from previous years to the present, shedding light on the dynamics of economic growth and adaptation.
+
+4. Mapping Business Development Trends to represent the spatial distribution of new businesses and highlight regions experiencing notable shifts in entrepreneurial activity.
 
 ```{r}
 #First I am going to load my datasets 
