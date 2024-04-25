@@ -44,9 +44,12 @@ new_business_low <- new_business  %>%
 ```{r}
 #Now I was to plot these findings on a map. first I am going to make a dataset. That we can apply to the map with the parameters of the regions. 
 
-bmore_map <- new_biz_map %>%
-  rename(CSA2020 = "Community_Statistical_Area_2020")%>%
-  inner_join(Census_Tract_2020 by = "Community_Statistical_Area_2020")
+#bmore_shapefile <- st_read("assets/data/Community_Statistical_Area_(2020).shp")
+leaflet() %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons(data=new_business_high, weight=1, fill="purple") %>%
+  addCircles(data=biz4_21,
+             label=biz4_21)
 
 ```
 
@@ -91,7 +94,7 @@ inner_join(new_business, by = "CSA2020") %>%
   filter(CSA2020 == "Oldtown/Middle East") %>%
 mutate(pct_change = ((biz1_21 - biz1_19) / biz1_19 * 100))
 
-# The percent change from 2019-2021 in Oldtown/ Middle East Region of Baltimore was -56%. This likely due to the pandemic. 
+# The Percent change from 2019-2021 in Oldtown/ Middle East Region of Baltimore was -56%. This likely due to the pandemic. 
 
 ```
 
