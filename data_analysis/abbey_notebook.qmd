@@ -11,7 +11,7 @@ library(sf)
 library(leaflet)
 ```
 
-Exploring Business Development in Baltimore: A Geographic Analysis
+Exploring Business Development in Baltimore
 
 In this notebook I will look into the dynamics of business development in Baltimore, Maryland. By examining datasets related to the distribution of new businesses across different regions of Baltimore, we aim to uncover insights into the patterns and trends of entreprenurial activity within the city.
 
