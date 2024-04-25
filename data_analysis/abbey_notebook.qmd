@@ -1,0 +1,69 @@
+---
+title: "abbey_Data_notebook"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(sf)
+library(leaflet)
+```
+
+
+```{r}
+#First I am going to load my datasets 
+new_business <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/data_analysis/Percent_of_Businesses_that_are_4_Years_old_or_less.csv")
+total_businesses <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/data_analysis/Total_Number_of_Businesses.csv")
+```
+```{r}
+#the first dataset I want to look at is which regions in Baltimore have the most buisness under 4 years old. I am going to use the average of two most recent years. 
+
+new_business_high <- new_business  %>%
+ select(CSA2020,biz4_20, biz4_21) %>%
+ arrange(desc(biz4_21))
+  #mutate(biz_av= (biz4_20 + biz4_21/2)) 
+ #sort(desc("biz_av"))
+
+#The region of Baltimore with highest percent of new businesses from 2021 was Oldtown/Middle East. 
+
+new_business_low <- new_business  %>%
+ select(CSA2020,biz4_20, biz4_21) %>%
+  arrange(biz4_21)
+  #mutate(biz_av= (biz4_20 + biz4_21/2)) 
+
+
+#The region of Baltimore with lowest percent of new businesses from 2021 was Westport/Mount Winans/Lakeland 
+
+```
+
+```{r}
+#The next question I wanted to solve was what percentage of total businesses in a region of Baltimore are under 4 Years old. To determine this I will combine the total business table with the businessmen under 4 years old table to compare the percents of many business in the area are relatively new. 
+
+pct_total_new_biz <- total_businesses %>%
+inner_join(new_business, by="CSA2020")%>%
+select(CSA2020, numbus21, biz4_21)%>%
+mutate(pct_whole = (biz4_21 / numbus21) * 100)%>%
+arrange(desc(pct_whole))
+
+#Edmondson Village had the highest percent of 4 or less year old businesses out of the regions total amount of businesses. The percent of new businesses out of the total is about 55.5% 
+
+```
+
+```{r}
+#the next question I wanted to determine was how did new business development grow from 2019-2021. I will determine this by comparing the values of new business under 4 years old for the past three years and then determine the percent change. then I can filter to see which 10 regios had the highest change in percentage points. 
+
+biz_dev <- Percent_of_Businesses_that_are_4_Years_old_or_less %>%
+select(CSA2020, biz4_19, biz4_21) %>%
+mutate(pct_change = ((biz4_21 - biz4_19) / biz4_19 * 100))%>%
+arrange(desc(pct_change))
+
+#The region of Baltimroe with the largerst percentage change from 2019-2021 in business development is Dickeyville/Franklintown with a percent change of 112%. 
+
+```
+
+```{r}
+#the question I want o find out is was there a significant boom in business d
+```
+
