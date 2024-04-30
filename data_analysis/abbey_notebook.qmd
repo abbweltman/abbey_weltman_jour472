@@ -9,6 +9,7 @@ library(tidyverse)
 library(janitor)
 library(sf)
 library(leaflet)
+library(rvest)
 ```
 
 Exploring Business Development in Baltimore
@@ -40,7 +41,7 @@ Census_Tract_2020 <- read_csv("Census_Tract_(2020)_to_Community_Statistical_Area
 new_business_high <- new_business  %>%
  select(CSA2020,biz4_20, biz4_21) %>%
  arrange(desc(biz4_21))%>%
-mutate(biz_av= round((biz4_20 + biz4_21)/2,2)) 
+mutate(biz_av= round((biz4_20 + biz4_21)/2,2))
  #sort(desc("biz_av"))
 
 #The region of Baltimore with highest percent of new businesses from 2021 was Oldtown/Middle East. 
@@ -55,14 +56,23 @@ new_business_low <- new_business  %>%
 ```
 
 ```{r}
-#Now I was to plot these findings on a map. first I am going to make a dataset. That we can apply to the map with the parameters of the regions. 
+#Now I was to plot these findings on a map. first I am going to make a dataset. That we can apply to the map with the parameters of the regions. First I am going to inter join the GOID with the new_business_high_data. 
 
-#bmore_shapefile <- st_read("assets/data/Community_Statistical_Area_(2020).shp")
-leaflet() %>%
-  addProviderTiles(providers$CartoDB.Positron) %>%
-  addPolygons(data=new_business_high, weight=1, fill="purple") %>%
-  addCircles(data=biz4_21,
-             label=biz4_21)
+balt_tract_shapefiles <- read_rds("baltimore_tract_shapefiles.rds")
+
+CSA2020 <- Census_Tract_2020 %>% 
+inner_join(new_business_high, by=c("Community_Statistical_Area_2020" ="CSA2020"))
+  
+new_business_high_sf <- CSA2020 %>% 
+  st_as_sf()
+
+#Spatial Join
+new_business_high_geo <- balt_tract_shapefiles %>% 
+  st_join(new_business_high_sf )
+
+ggplot() +
+  geom_sf(data=balt_tract_shapefiles) +
+  geom_sf(data=new_business_high_sf) 
 
 ```
 
@@ -110,3 +120,38 @@ mutate(pct_change = ((biz1_21 - biz1_19) / biz1_19 * 100))
 # The Percent change from 2019-2021 in Oldtown/ Middle East Region of Baltimore was -56%. This likely due to the pandemic. 
 
 ```
+
+
+```{r}
+#Read new files
+balt_tract_shapefiles <- read_rds("baltimore_tract_shapefiles.rds")
+balt_census_crosswalk <- read_csv("balt_census_crosswalks_2020.csv")
+
+#Set up geo files
+balt_census_crosswalk <- balt_census_crosswalk %>% 
+  mutate(geoid=as.character(GEOID_Tract_2020))
+
+#making files shapefiles
+balt_geo_neighb <- balt_census_crosswalk %>% 
+  inner_join(balt_tract_shapefiles, by=c("geoid")) %>% 
+  st_as_sf() 
+
+balt_homicides_sf <- balt_homicides %>% 
+    st_as_sf(
+    coords = c("lon","lat"),
+    crs="NAD83") 
+
+#map
+ggplot() +
+  geom_sf(data=balt_geo_neighb) +
+  geom_sf(data=balt_homicides_sf) 
+
+#Although this graph is not necessary to answer the question, it is interesting in that it illustrates that the homicides in Baltimore from 2007-2017 lay mostly on the Black Butterfly, which is Baltimore's historically Black neighborhoods. This is an observation of the data that we found was overlooked by The Washington Post, but it is important for understanding the racial dynamic of Baltimore City and its neighborhoods.
+
+#spacial join
+balt_homicides_geo <- balt_homicides_sf%>%
+  st_join(balt_geo_neighb) 
+
+
+```
+
