@@ -17,22 +17,23 @@ In this notebook I will look into the dynamics of business development in Baltim
 
 My analysis focuses on several key aspects:
 
-1. Spatial Distribution of New Businesses: We investigate which regions of Baltimore have the highest concentration of new businesses, providing valuable insights into areas experiencing significant entrepreneurial activity.
+1.  Spatial Distribution of New Businesses: We investigate which regions of Baltimore have the highest concentration of new businesses, providing valuable insights into areas experiencing significant entrepreneurial activity.
 
 2.Percentage of New Businesses Relative to Total: By comparing the percentage of new businesses to the total number of businesses in each region, we gain a deeper understanding of the prevalence of entrepreneurial ventures within the broader business landscape of Baltimore.
 
 3.Analysis of Business Development: I will explore how business development has evolved over recent years by examining changes in the percentage of new businesses from previous years to the present, shedding light on the dynamics of economic growth and adaptation.
 
-4. Mapping Business Development Trends to represent the spatial distribution of new businesses and highlight regions experiencing notable shifts in entrepreneurial activity.
+4.  Mapping Business Development Trends to represent the spatial distribution of new businesses and highlight regions experiencing notable shifts in entrepreneurial activity.
 
 ```{r}
 #First I am going to load my datasets 
-new_business <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/data_analysis/Percent_of_Businesses_that_are_4_Years_old_or_less.csv")
-total_businesses <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/data_analysis/Total_Number_of_Businesses.csv")
-one_yr_biz <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/data_analysis/Percent_of_Businesses_that_are_1_Year_old_or_less (1).csv")
-Census_Tract_2020 <- read_csv("~/Documents/GitHub/abbey_weltman_jour472/data_analysis/Census_Tract_(2020)_to_Community_Statistical_Area_(2020).csv")
+new_business <- read_csv("Percent_of_Businesses_that_are_4_Years_old_or_less.csv")
+total_businesses <- read_csv("Total_Number_of_Businesses.csv")
+one_yr_biz <- read_csv("Percent_of_Businesses_that_are_1_Year_old_or_less (1).csv")
+Census_Tract_2020 <- read_csv("Census_Tract_(2020)_to_Community_Statistical_Area_(2020).csv")
 
 ```
+
 ```{r}
 #the first dataset I want to look at is which regions in Baltimore have the most buisness under 4 years old. I am going to use the average of two most recent years. 
 
@@ -52,7 +53,6 @@ new_business_low <- new_business  %>%
 #The region of Baltimore with lowest percent of new businesses from 2021 was Westport/Mount Winans/Lakeland 
 
 ```
-
 
 ```{r}
 #Now I was to plot these findings on a map. first I am going to make a dataset. That we can apply to the map with the parameters of the regions. 
@@ -110,4 +110,3 @@ mutate(pct_change = ((biz1_21 - biz1_19) / biz1_19 * 100))
 # The Percent change from 2019-2021 in Oldtown/ Middle East Region of Baltimore was -56%. This likely due to the pandemic. 
 
 ```
-
