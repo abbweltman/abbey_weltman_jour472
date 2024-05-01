@@ -61,19 +61,19 @@ new_business_low <- new_business  %>%
 balt_tract_shapefiles <- read_rds("baltimore_tract_shapefiles.rds")
 
 CSA2020 <- Census_Tract_2020 %>% 
-inner_join(new_business_high, by=c("Community_Statistical_Area_2020" ="CSA2020"))
+inner_join(new_business_high, by=c("Community_Statistical_Area_2020" = "CSA2020"))
   
-new_business_high_sf <- CSA2020 %>% 
+CSA2020_sf <- CSA2020 %>% 
   st_as_sf()
 
 #Spatial Join
 new_business_high_geo <- balt_tract_shapefiles %>% 
-  st_join(new_business_high_sf )
+  st_join(new_business_high_sf)
 
 ggplot() +
   geom_sf(data=balt_tract_shapefiles) +
   geom_sf(data=new_business_high_sf) 
-
+  geom_sf_label(biz4_21)
 ```
 
 ```{r}
@@ -82,7 +82,7 @@ ggplot() +
 pct_total_new_biz <- total_businesses %>%
 inner_join(new_business, by="CSA2020")%>%
 select(CSA2020, numbus21, biz4_21)%>%
-mutate(pct_whole = round(biz4_21 / numbus21) * 100,2)%>%
+mutate(pct_whole = round((biz4_21 / numbus21) * 100,2))%>%
 arrange(desc(pct_whole))
 
 #Edmondson Village had the highest percent of 4 or less year old businesses out of the regions total amount of businesses. The percent of new businesses out of the total is about 55.5% 
@@ -123,34 +123,17 @@ mutate(pct_change = ((biz1_21 - biz1_19) / biz1_19 * 100))
 
 
 ```{r}
-#Read new files
-balt_tract_shapefiles <- read_rds("baltimore_tract_shapefiles.rds")
-balt_census_crosswalk <- read_csv("balt_census_crosswalks_2020.csv")
+#The analysis of business development in Baltimore revealsinsights into the city's entrepreneurial landscape.
 
-#Set up geo files
-balt_census_crosswalk <- balt_census_crosswalk %>% 
-  mutate(geoid=as.character(GEOID_Tract_2020))
+#Firstly, the spatial distribution of new businesses unveils regional hotspots of entrepreneurial activity, with areas like Oldtown/Middle East yeilding a high concentration of new businesses. On the other hand, regions like Westport/Mount Winans/Lakeland exhibit lower levels of entrepreneurial growth.
 
-#making files shapefiles
-balt_geo_neighb <- balt_census_crosswalk %>% 
-  inner_join(balt_tract_shapefiles, by=c("geoid")) %>% 
-  st_as_sf() 
+#Examining the percentage of new businesses relative to the total number in each region provides a understanding of the prevalence of new businesses within Baltimore's business landscape. For instance, Edmondson Village emerges as a standout area with approximately 55.5% of its businesses being under four years old, reflecting significant entrepreneurial enviornment.
 
-balt_homicides_sf <- balt_homicides %>% 
-    st_as_sf(
-    coords = c("lon","lat"),
-    crs="NAD83") 
+#Furthermore, analyzing the evolution of business development from 2019 to 2021 sheds light on the dynamic changes in entrepreneurial activity. Dickeyville/Franklintown stands out with a remarkable 112% increase in business development during this period, indicating notable growth and adaptation within the local business ecosystem.
 
-#map
-ggplot() +
-  geom_sf(data=balt_geo_neighb) +
-  geom_sf(data=balt_homicides_sf) 
+#Mapping these trends visually shows the spatial distribution of new businesses and highlights regions experiencing notable shifts in entrepreneurial activity. This visual representation provides stakeholders with valuable insights into the changing dynamics of business development across Baltimore.
 
-#Although this graph is not necessary to answer the question, it is interesting in that it illustrates that the homicides in Baltimore from 2007-2017 lay mostly on the Black Butterfly, which is Baltimore's historically Black neighborhoods. This is an observation of the data that we found was overlooked by The Washington Post, but it is important for understanding the racial dynamic of Baltimore City and its neighborhoods.
-
-#spacial join
-balt_homicides_geo <- balt_homicides_sf%>%
-  st_join(balt_geo_neighb) 
+#Overall, these findings suggest a dynamic and evolving entrepreneurial landscape in Baltimore, with certain regions experiencing rapid growth while others navigate challenges such as the impact of the COVID-19 pandemic. Such insights can inform strategic decision-making and policy interventions aimed at fostering sustainable economic growth and prosperity in the city.
 
 
 ```
