@@ -80,7 +80,6 @@ write_csv(race_realestate,"race_realestate.csv")
 #The results indicate that the areas with the lower median home price have less diversity. Almost all the lowest median regions were in the bottom 10 for racial diversity.
 ```
 
-
 ```{r}
 #here is the link to the datawrapper graphic I have created. It is a scatter plat that shows how the diversity and median housing price for each county compare to eachother https://datawrapper.dwcdn.net/scuWh/1/ this is the embed coded
 
