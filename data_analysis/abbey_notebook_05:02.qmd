@@ -12,11 +12,12 @@ library(leaflet)
 library(rvest)
 library(ggplot2)
 library(dplyr)
+library(htmltools)
 ```
 
 Exploring Business Development in Baltimore
 
-In this notebook I will look into the dynamics of business development in Baltimore, Maryland. By examining datasets related to the distribution of new businesses across different regions of Baltimore, we aim to uncover insights into the patterns and trends of entreprenurial activity within the city.
+In this notebook I will look into the dynamics of business development in Baltimore, Maryland. By examining datasets related to the distribution of new businesses across different regions of Baltimore, we aim to uncover insights into the patterns and trends of entrepreneurial activity within the city.
 
 My analysis focuses on several key aspects:
 
@@ -28,17 +29,13 @@ Analysis of Business Development: I will explore how business development has ev
 
 Mapping Business Development Trends to represent the spatial distribution of new businesses and highlight regions experiencing notable shifts in entrepreneurial activity. All the data I used in my project came from the Baltimore Neighborhood Indicators Alliance. They have a data set that showed the total businesses in each community statistical area and the percent of businesses in each community statistical area that were under 4 years old. I also used a similar dataset for percent of businesses in each community statistical area that were under one year old and the geoid tracts of Baltimore. Then I used the Baltimore mapping resources to identify the CSA polygons and create a map.
 
-"Total Number of Businesses"
-1.  https://vital-signs-bniajfi.hub.arcgis.com/datasets/bniajfi::total-number-of-businesses/explore?layer=0&location=39.284764%2C-76.620440%2C11.72
+**"Total Number of Businesses"** 1. https://vital-signs-bniajfi.hub.arcgis.com/datasets/bniajfi::total-number-of-businesses/explore?layer=0&location=39.284764%2C-76.620440%2C11.72
 
-"Percent of Businesses that are Four Years Old or Less"
-2.  https://vital-signs-bniajfi.hub.arcgis.com/datasets/bniajfi::percent-of-businesses-that-are-4-years-old-or-less/explore?layer=0&location=39.284764%2C-76.620440%2C11.72
+**"Percent of Businesses that are Four Years Old or Less"** 2. https://vital-signs-bniajfi.hub.arcgis.com/datasets/bniajfi::percent-of-businesses-that-are-4-years-old-or-less/explore?layer=0&location=39.284764%2C-76.620440%2C11.72
 
-"Percent of Businesses that are One Year Old or Less"
-3.  https://vital-signs-bniajfi.hub.arcgis.com/datasets/bniajfi::percent-of-businesses-that-are-1-year-old-or-less-2/explore?layer=0&location=39.284764%2C-76.620440%2C11.72
+**"Percent of Businesses that are One Year Old or Less"** 3. https://vital-signs-bniajfi.hub.arcgis.com/datasets/bniajfi::percent-of-businesses-that-are-1-year-old-or-less-2/explore?layer=0&location=39.284764%2C-76.620440%2C11.72
 
-"Community Statistical Area 2020"
-4.  https://mapping-bniajfi.opendata.arcgis.com/datasets/9be011c4ed2b481ab83e4f2cf2a04b78_0/explore?location=39.284764%2C-76.620524%2C11.72
+**"Community Statistical Area 2020"** 4. https://mapping-bniajfi.opendata.arcgis.com/datasets/9be011c4ed2b481ab83e4f2cf2a04b78_0/explore?location=39.284764%2C-76.620524%2C11.72
 
 ```{r}
 #First I am going to load my datasets 
@@ -66,27 +63,41 @@ new_business_low <- new_business  %>%
   arrange(biz4_21)%>%
   mutate(biz_av= round((biz4_20 + biz4_21)/2,2))%>% 
 head(10)
-#The region of Baltimore with lowest percent of new businesses from 2021 was Westport/Mount Winans/Lakeland 
+#The region of Baltimore with lowest percent of new businesses from 2021 was Westport/Mount Winans/Lakeland. This is interesting also becasue these cities are less then 10 miles away from eachother but have such different entreprenuiral culture. 
 
+```
+
+```{r}
+#this graphic shows the areas with the most business development in Baltimore. It shows how much higher Oldtown/Middle East is from the rest.
+iframe_code <- '
+<iframe title="Business Development In Baltimore" aria-label="Bar Chart" id="datawrapper-chart-0eJiM" src="https://datawrapper.dwcdn.net/0eJiM/1/" scrolling="no" frameborder="0" style="border: none;" width="600" height="1409" data-external="1"></iframe>
+'
+# Embed the iframe code into an HTML object
+iframe_html <- HTML(iframe_code)
+
+# Display the HTML object
+iframe_html
 ```
 
 ```{r}
 #Now I was to plot these findings on a map. first I am going to make a dataset. That we can apply to the map with the parameters of the regions. First I am going to inter join the shape length and area with the new business dataset.  
 
-balt_tract_shapefiles <- read_rds("baltimore_tract_shapefiles.rds") 
+#balt_tract_shapefiles <- read_rds("baltimore_tract_shapefiles.rds") 
   
-balt_shape <- balt_tract_shapefiles %>%
-inner_join (Census_Tract_2020, by=c("GEOID_Tract_2020" = "geoid"))
+#balt_shape <- balt_tract_shapefiles %>%
+ # 
+#Census_Tract_2020_sf <- Census_Tract_2020 %>%
+#st_as_sf()
+#inner_join (Census_Tract_2020, balt_tract_shapefiles, by=c("geoid" ="GEOID_Tract_2020"))
+#st_join(balt_tract_shapefiles, Census_Tract_2020, join = st_intersects))
 
-ggplot() +
-  geom_sf(data = balt_shape) +
-  geom_sf(data = new_business) +
-  geom_sf_label(data = new_business, aes(label = biz4_21))
+#ggplot() +
+  #geom_sf(data = balt_tract_shapefiles) +
+  #geom_sf(data = new_business) +
+  #geom_sf_label(data = new_business, aes(label = biz4_21))
 
  #CSAGEO_map <- CSAGEO  %>%
   #inner_join(new_business_high, by= "CSA2020")
-      
-#<iframe title="Business Development in Baltimore " aria-label="Map" id="datawrapper-chart-5PHpa" src="https://datawrapper.dwcdn.net/5PHpa/1/" scrolling="no" frameborder="0" style="border: none;" width="600" height="783" data-external="1"></iframe>
 
 ```
 
