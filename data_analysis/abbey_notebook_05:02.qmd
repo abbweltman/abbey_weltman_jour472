@@ -1,6 +1,6 @@
 ---
-title: "abbey_Data_notebook"
-format: html
+title: "abbey_data_analysis"
+format: pdf
 editor: visual
 ---
 
@@ -13,21 +13,24 @@ library(rvest)
 library(ggplot2)
 library(dplyr)
 library(htmltools)
+install.packages("tinytex")
 ```
 
-Exploring Business Development in Baltimore
+**Exploring Business Development in Baltimore**
 
-In this notebook I will look into the dynamics of business development in Baltimore, Maryland. By examining datasets related to the distribution of new businesses across different regions of Baltimore, we aim to uncover insights into the patterns and trends of entrepreneurial activity within the city.
+In this notebook I will look into the dynamics of business development in Baltimore, Maryland. By examining data sets related to the distribution of new businesses across different regions of Baltimore, I aim to uncover insights into the patterns and trends of entrepreneurial activity within the city.
 
 My analysis focuses on several key aspects:
 
-Spatial Distribution of New Businesses: We investigate which regions of Baltimore have the highest concentration of new businesses, providing valuable insights into areas experiencing significant entrepreneurial activity.
+**Spatial Distribution of New Businesses:** We investigate which regions of Baltimore have the highest concentration of new businesses, providing valuable insights into areas experiencing significant entrepreneurial activity.
 
-Percentage of New Businesses Relative to Total: By comparing the percentage of new businesses to the total number of businesses in each region, we gain a deeper understanding of the prevalence of entrepreneurial ventures within the broader business landscape of Baltimore.
+**Percentage of New Businesses Relative to Total:** By comparing the percentage of new businesses to the total number of businesses in each region, we gain a deeper understanding of the prevalence of entrepreneurial ventures within the broader business landscape of Baltimore.
 
-Analysis of Business Development: I will explore how business development has evolved over recent years by examining changes in the percentage of new businesses from previous years to the present, shedding light on the dynamics of economic growth and adaptation.
+**Analysis of Business Development:** I will explore how business development has evolved over recent years by examining changes in the percentage of new businesses from previous years to the present, shedding light on the dynamics of economic growth and adaptation.
 
-Mapping Business Development Trends to represent the spatial distribution of new businesses and highlight regions experiencing notable shifts in entrepreneurial activity. All the data I used in my project came from the Baltimore Neighborhood Indicators Alliance. They have a data set that showed the total businesses in each community statistical area and the percent of businesses in each community statistical area that were under 4 years old. I also used a similar dataset for percent of businesses in each community statistical area that were under one year old and the geoid tracts of Baltimore. Then I used the Baltimore mapping resources to identify the CSA polygons and create a map.
+**Mapping Business Development Trends** to represent the spatial distribution of new businesses and highlight regions experiencing notable shifts in entrepreneurial activity. All the data I used in my project came from the Baltimore Neighborhood Indicators Alliance. They have a data set that showed the total businesses in each community statistical area and the percent of businesses in each community statistical area that were under 4 years old. I also used a similar dataset for percent of businesses in each community statistical area that were under one year old and the geoid tracts of Baltimore. Then I used the Baltimore mapping resources to identify the CSA polygons and create a map.
+
+**Data Used:**
 
 **"Total Number of Businesses"** 1. https://vital-signs-bniajfi.hub.arcgis.com/datasets/bniajfi::total-number-of-businesses/explore?layer=0&location=39.284764%2C-76.620440%2C11.72
 
@@ -82,24 +85,27 @@ iframe_html
 ```{r}
 #Now I was to plot these findings on a map. first I am going to make a dataset. That we can apply to the map with the parameters of the regions. First I am going to inter join the shape length and area with the new business dataset.  
 
-#balt_tract_shapefiles <- read_rds("baltimore_tract_shapefiles.rds") 
+balt_tract_shapefiles <- read_rds("baltimore_tract_shapefiles.rds") 
+
+Census_Tract_2020 <- Census_Tract_2020 %>%
+mutate(GEOID_Tract_2020 = as.character(GEOID_Tract_2020)) 
   
-#balt_shape <- balt_tract_shapefiles %>%
- # 
-#Census_Tract_2020_sf <- Census_Tract_2020 %>%
-#st_as_sf()
-#inner_join (Census_Tract_2020, balt_tract_shapefiles, by=c("geoid" ="GEOID_Tract_2020"))
-#st_join(balt_tract_shapefiles, Census_Tract_2020, join = st_intersects))
+balt_shape <- balt_tract_shapefiles %>%
+inner_join (Census_Tract_2020, by=c("geoid" ="GEOID_Tract_2020"))%>%
+inner_join(new_business_high, by=c("Community_Statistical_Area_2020" = "CSA2020"))
 
-#ggplot() +
-  #geom_sf(data = balt_tract_shapefiles) +
-  #geom_sf(data = new_business) +
-  #geom_sf_label(data = new_business, aes(label = biz4_21))
-
- #CSAGEO_map <- CSAGEO  %>%
-  #inner_join(new_business_high, by= "CSA2020")
-
+leaflet() %>%
+ addProviderTiles(providers$CartoDB.Positron) %>%
+addPolygons(data = balt_shape)  %>%
+ addCircles(data = balt_shape,
+            label = ~balt_shape$Community_Statistical_Area_2020)
+leaflet() %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons(data = balt_shape) %>%
+  addCircleMarkers(data = balt_shape$biz4_21,
+                   label = ~Community_Statistical_Area_2020)
 ```
+
 
 ```{r}
 #The next question I wanted to solve was what percentage of total businesses in a region of Baltimore are under 4 Years old. To determine this I will combine the total business table with the businessmen under 4 years old table to compare the percents of many business in the area are relatively new. 
@@ -127,11 +133,11 @@ arrange(desc(pct_change))
 ```
 
 ```{r}
-#the question I want to look at the distribution of business development in Baltimore on a map visual. To do this I am going to select the top 10 regions of Baltimore that had the highest percent of business under 4 years old and plot them on a map. 
+#the question I want to look at the business development in Baltimore under one year old. To do this I am going to select the top 10 regions of Baltimore that had the highest percent of business under 1 year old.
 
 one_yr_constant <- one_yr_biz %>%
   inner_join(new_business, by = "CSA2020") %>%
-#select(CSA2020, biz1_21, biz4_21.y) %>%
+select(CSA2020, biz1_21) %>%
 arrange(desc(biz1_21))
 
 #the region of Baltimore with the highest percent of business 1 year old or less is  Oldtown/Middle East this is consistent with what I saw in the the 4 years or less data. So there are consistently experiencing rapid business development over the past 4 years so now I want to see the percent change of just Oldtown/Middle East in the past couple years. 
@@ -146,18 +152,18 @@ mutate(pct_change = ((biz1_21 - biz1_19) / biz1_19 * 100))
 
 ```
 
-```{r}
-#The analysis of business development in Baltimore revealsinsights into the city's entrepreneurial landscape.
+**Final Memo:**
 
-#Firstly, the spatial distribution of new businesses unveils regional hotspots of entrepreneurial activity, with areas like Oldtown/Middle East yeilding a high concentration of new businesses. On the other hand, regions like Westport/Mount Winans/Lakeland exhibit lower levels of entrepreneurial growth.
+The analysis of business development in Baltimore reveals insights into the city's entrepreneurial landscape.
 
-#Examining the percentage of new businesses relative to the total number in each region provides a understanding of the prevalence of new businesses within Baltimore's business landscape. For instance, Edmondson Village emerges as a standout area with approximately 55.5% of its businesses being under four years old, reflecting significant entrepreneurial enviornment.
+Firstly, the spatial distribution of new businesses unveils regional hotspots of entrepreneurial activity, with areas like Oldtown/Middle East yeilding a high concentration of new businesses. On the other hand, regions like Westport/Mount Winans/Lakeland exhibit lower levels of entrepreneurial growth.
 
-#Furthermore, analyzing the evolution of business development from 2019 to 2021 sheds light on the dynamic changes in entrepreneurial activity. Dickeyville/Franklintown stands out with a remarkable 112% increase in business development during this period, indicating notable growth and adaptation within the local business ecosystem.
+Examining the percentage of new businesses relative to the total number in each region provides a understanding of the prevalence of new businesses within Baltimore's business landscape. For instance, Edmondson Village emerges as a standout area with approximately 55.5% of its businesses being under four years old, reflecting significant entrepreneurial environment.
 
-#Mapping these trends visually shows the spatial distribution of new businesses and highlights regions experiencing notable shifts in entrepreneurial activity. This visual representation provides stakeholders with valuable insights into the changing dynamics of business development across Baltimore.
+Furthermore, analyzing the evolution of business development from 2019 to 2021 sheds light on the dynamic changes in entrepreneurial activity. Dickeyville/Franklintown stands out with a remarkable 112% increase in business development during this period, indicating notable growth and adaptation within the local business ecosystem.
 
-#Overall, these findings suggest a dynamic and evolving entrepreneurial landscape in Baltimore, with certain regions experiencing rapid growth while others navigate challenges such as the impact of the COVID-19 pandemic. Such insights can inform strategic decision-making and policy interventions aimed at fostering sustainable economic growth and prosperity in the city.
+Mapping these trends visually shows the spatial distribution of new businesses and highlights regions experiencing notable shifts in entrepreneurial activity. This visual representation provides stakeholders with valuable insights into the changing dynamics of business development across Baltimore.
 
+Overall, these findings suggest a dynamic and evolving entrepreneurial landscape in Baltimore, with certain regions experiencing rapid growth while others navigate challenges such as the impact of the COVID-19 pandemic. Such insights can inform strategic decision-making and policy interventions aimed at fostering sustainable economic growth and prosperity in the city.
 
-```
+ADD PITCH 
